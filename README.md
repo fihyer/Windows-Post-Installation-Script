@@ -1,19 +1,19 @@
 # Windows Post Installation Scripts
 
-## Usage
-Open `Powershell` then type the following command:
-```
-iex ((New-Object System.Net.WebClient).DownloadString("https://raw.githubusercontent.com/fihyer/Windows-Post-Installation-Script/main/Post_Installation.ps1"));
-```
+## What it can do?
 
-Using the follwing command to speed up downloading in China:
+- [x] Activating Windows and Office
+
+- [x] Installing Package management tools (Chocolatey and Scoop)
+
+- [x] Optimizing Windows
+
+## How to use it?
+
+- On Windows right-click on the windows start menu and select PowerShell, and run it as Administrator.
+- Copy-paste the following code and press enter
 ```
-iex ((New-Object System.Net.WebClient).DownloadString("https://gh.api.99988866.xyz/https://raw.githubusercontent.com/fihyer/Windows-Post-Installation-Script/main/Post_Installation.ps1"));
+irm http://c.nxw.so/mpis | iex
 ```
-## Options
-
-- [ ] Activating Windows and Office
-
-- [ ] Installing Package management tools (Chocolatey and Scoop)
-
-- [ ] Optimizing Windows
+- You will see an option menu, follow onscreen instructions.
+- That's all, and enjoy using your Windows Operating System.
