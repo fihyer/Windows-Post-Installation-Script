@@ -1,5 +1,5 @@
 # START POST INSTALLATION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
+Set-ExecutionPolicy Bypass -Scope Process -Force;
 
 #===============================================================================
 # !0. Utilities
@@ -192,7 +192,31 @@ function Set-Env {
 }
 
 
-function Activate-Microsoft{
+
+
+$ScoopPath = "C:\Users\$($Env:username)\scoop\shims"
+$ScoopApp = "C:\Users\$($Env:username)\scoop\shims\scoop"
+$ScoopPS1 = "C:\Users\$($Env:username)\scoop\shims\scoop.ps1"
+$ChocoPath = "C:\ProgramData\Chocolatey\Choco.exe"
+$ChocoURL = "https://community.chocolatey.org/install.ps1"
+
+
+
+
+# Enable TLSv1.2 for compatibility with older clients
+# [System.Net.SecurityProtocolType]::Tls12.value__ equals to 3072
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12
+#[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
+
+#===============================================================================
+# !1. Change Excuation policy
+#===============================================================================
+
+
+#===============================================================================
+# !2. Activating Windows Operating System
+#===============================================================================
+function Initiate-WAS{
 
     $FilePath = "$env:TEMP\MAS.cmd"
     $ScriptArgs = "$args "
@@ -226,56 +250,19 @@ function Activate-Microsoft{
     }
 }
 
-
-$ScoopPath = "C:\Users\$($Env:username)\scoop\shims"
-$ScoopApp = "C:\Users\$($Env:username)\scoop\shims\scoop"
-$ScoopPS1 = "C:\Users\$($Env:username)\scoop\shims\scoop.ps1"
-$ChocoPath = "C:\ProgramData\Chocolatey\Choco.exe"
-$ChocoURL = "https://community.chocolatey.org/install.ps1"
-
-
-
-
-# Enable TLSv1.2 for compatibility with older clients
-# [System.Net.SecurityProtocolType]::Tls12.value__ equals to 3072
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12
-#[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-
-#===============================================================================
-# !1. Change Excuation policy
-#===============================================================================
-#Set-ExecutionPolicy Bypass -Scope Process -Force;
-
-
-#===============================================================================
-# !2. Activating Windows Operating System
-#===============================================================================
-
-
-#TODO: Check Windows Version
-$string = Get-WmiObject Win32_OperatingSystem | Select -Property Caption
-
-if ($string.Caption.ToString().contains("LTSC")) { 
-    Copy-Item -Path "C:\Logfiles\*" -Destination "C:\Windows\System32\spp\tokens\skus" -Recurse
-    Activate-Microsoft
-}else { 
-    Activate-Microsoft
+function Activate-Microsoft {
+    $string = Get-WmiObject Win32_OperatingSystem | Select -Property Caption
+    if ($string.Caption.ToString().contains("LTSC")) { 
+        Copy-Item -Path "C:\Logfiles\*" -Destination "C:\Windows\System32\spp\tokens\skus" -Recurse
+        Initiate-WAS
+    }else { 
+        Initiate-WAS
+    }
 }
+
 
 #-------------------------------------------------------------------------------
 
-function Install-Applications {
-    param (
-        OptionalParameters
-    )
-    
-}
-
-
-
-#===============================================================================
-# !3. Package installation function
-#===============================================================================
 function Install-Scoop {
 # USE: Install-Scoop -AppPath $ScoopPath -App $ScoopApp -PS1File $ScoopPS1
     param (
@@ -305,8 +292,6 @@ function Install-Scoop {
 
 
 #-------------------------------------------------------------------------------
-
-#TODO: Install Chocolatey package manager
 
 function Install-Chocolatey {
 # USE: Install-Chocolatey -AppPath $ChocoPath -DownloadURL $ChocoURL
@@ -360,8 +345,8 @@ do {
                 Windows Post Installation ToolBox
 
              [1] Activate Microsoft Products
-             [2] Install Package Management Tools
-             [3] Install Applications
+             [2] Install Chocolatey Package Management Tool
+             [3] Install Scoop installer Management Tool
              [Q] Exit
              __________________________________________________      
 
@@ -378,9 +363,9 @@ do {
     $Choice = Read-Host ' '
     
     switch ($Choice) {
-        1 { Format-Color -Message "Test" }
-        2 { Format-Color -Message "Test" }
-        3 { Format-Color -Message "Test" }
+        1 { Activate-Microsoft }
+        2 { Install-Chocolatey -AppPath $ChocoPath -DownloadURL $ChocoURL }
+        3 { Install-Scoop -AppPath $ScoopPath -App $ScoopApp -PS1File $ScoopPS1 }
     }
 } until ($Choice -eq 'q')
 # <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<END POST INSTALLATION
