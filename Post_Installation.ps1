@@ -279,6 +279,19 @@ function Install-Scoop {
             Set-Env -Target 'Machine' -FullPath $AppPath;
             Unblock-File -Path $PS1File
             Unblock-File -Path $APP;
+
+            Format-Color -Message "Installing and config aria2 downloader..." -ForegroundColor Blue;
+            scoop install aria2;
+            scoop config aria2-enabled true;
+            scoop config aria2-retry-wait 4;
+            scoop config aria2-split 6;
+            scoop config aria2-max-connection-per-server 16;
+            scoop config aria2-min-split-size 4M;
+
+            Format-Color -Message "Installing git and add extra source to scoop..." -ForegroundColor Blue;
+            scoop install git;
+            scoop bucket add scoopet https://github.com/ivaquero/scoopet;
+            scoop update;
         }
         catch {
             throw $_.Exception.Message
@@ -303,8 +316,18 @@ function Install-Chocolatey {
     # If the choco.exe file does not exist, go install it
     if (-not(Test-Path -Path $AppPath -PathType Leaf)) {
         try {
-            Format-Color -Message "Installing Scoop installer manager..." -ForegroundColor Blue;
+            Format-Color -Message "Installing Chocolatey package manager..." -ForegroundColor Blue;
             iex ((New-Object System.Net.WebClient).DownloadString($DownloadURL));
+            
+            # Chocolatey steup
+            # ![o] Setup environment variable
+            [environment]::SetEnvironmentVariable('ChocolateyInstall', 'C:\ProgramData\chocolatey', 'Machine');
+            [environment]::SetEnvironmentVariable('ChocolateyToolsLocation', 'C\ProgramData\chocotools', 'Machine');
+
+            # ![o] Setup app installation behavior
+            choco feature enable -n allowGlobalConfirmation;
+            choco feature enable -name=exitOnRebootDetected;
+
         }
         catch {
             throw $_.Exception.Message;
