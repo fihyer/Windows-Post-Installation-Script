@@ -280,6 +280,13 @@ function Install-Scoop {
             Unblock-File -Path $PS1File
             Unblock-File -Path $APP;
 
+            # !important!
+            Format-Color -Message "Important! Optimize Scoop Environment" -ForegroundColor Blue;
+            scoop install sudo
+            sudo Add-MpPreference -ExclusionPath 'C:\Users\Administrator\scoop';
+            sudo Add-MpPreference -ExclusionPath 'C:\ProgramData\scoop';
+            sudo Set-ItemProperty 'HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem' -Name 'LongPathsEnabled' -Value 1;
+
             Format-Color -Message "Installing and config aria2 downloader..." -ForegroundColor Blue;
             scoop install aria2;
             scoop config aria2-enabled true;
@@ -289,6 +296,9 @@ function Install-Scoop {
             scoop config aria2-min-split-size 4M;
 
             Format-Color -Message "Installing git and add extra source to scoop..." -ForegroundColor Blue;
+            scoop bucket add extras;
+            scoop update;
+            # 7Zip will be installed while installing git 
             scoop install git;
             scoop bucket add scoopet https://github.com/ivaquero/scoopet;
             scoop update;
