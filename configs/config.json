@@ -1,0 +1,28 @@
+{
+    "Python":[
+        {
+            "platform": "Windows",
+            "config": [
+                {"type": "pip", "path":"%USERPROFILE%\\pip\\pip.ini"},
+                {"type": "pip", "path":"%%APPDATA%\\pip\\pip.ini"},
+                {"type": "pip", "path":"%HOME%\\pip\\pip.ini"}
+                ]
+        },
+        {
+            "platform": "Linux",
+            "config": [
+                {"type": "pip", "path":"/etc/pip.conf"},
+                {"type": "pip", "path":"$HOME/.config/pip/pip.conf"},
+                {"type": "pip", "path":"$HOME/.pip/pip.conf"}
+                ]
+        },
+        {
+            "platform": "Mac",
+            "config": [
+                {"type": "pip", "path":"$HOME/.pip/pip.conf"},
+                {"type": "pip", "path":"$HOME/Library/Application Support/pip/pip.conf"},
+                ]
+        },
+
+    ]
+}
