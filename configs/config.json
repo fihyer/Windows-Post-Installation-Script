@@ -1,28 +1,64 @@
 {
-    "Python":[
+    "hostsSource": "https://gitee.com/fliu2476/github-hosts/raw/main/hosts",
+    "poetrySource": "https://install.python-poetry.org",
+    "pipSource": [
+        {"sourceName":"offical", "URL":"https://pypi.org/simple"},
+        {"sourceName":"tsinghua", "URL":"https://pypi.tuna.tsinghua.edu.cn/simple"},
+        {"sourceName":"douban", "URL":"http://pypi.douban.com/simple"},
+        {"sourceName":"aliyun", "URL":"https://mirrors.aliyun.com/pypi/simple"},
+        {"sourceName":"ustc", "URL":"https://pypi.mirrors.ustc.edu.cn/simple"}
+    ],
+    "pyenvSource": [
         {
             "platform": "Windows",
-            "config": [
-                {"type": "pip", "path":"%USERPROFILE%\\pip\\pip.ini"},
-                {"type": "pip", "path":"%%APPDATA%\\pip\\pip.ini"},
-                {"type": "pip", "path":"%HOME%\\pip\\pip.ini"}
-                ]
+            "URL": "https://raw.githubusercontent.com/pyenv-win/pyenv-win/master/pyenv-win/install-pyenv-win.ps1"
         },
         {
             "platform": "Linux",
-            "config": [
-                {"type": "pip", "path":"/etc/pip.conf"},
-                {"type": "pip", "path":"$HOME/.config/pip/pip.conf"},
-                {"type": "pip", "path":"$HOME/.pip/pip.conf"}
-                ]
+            "URL": "https://pyenv.run"
+        }
+    ],
+    "hostConfig":[
+        {
+            "platform" : "Unix",
+            "configpath": "/etc/hosts",
+            "refresTime": 17280
+        },
+        {
+            "platform": "Windows",
+            "configpath": "C:\\Windows\\System32\\drivers\\etc\\hosts",
+            "refresTime": 17280
+        }
+    ],
+    "pipconfig": [
+        {
+            "platform": "Windows",
+            "configFile": [
+                "%USERPROFILE%\\pip\\pip.ini",
+                "%APPDATA%\\pip\\pip.ini",
+                "%HOME%\\pip\\pip.ini"
+            ],
+            "timeout": 17280
+        },
+        {
+            "platform": "Linux",
+            "configFile": [
+                "/etc/pip.conf",
+                "$HOME/.config/pip/pip.conf",
+                "$HOME/.pip/pip.conf"
+            ],
+            "timeout": 120
         },
         {
             "platform": "Mac",
-            "config": [
-                {"type": "pip", "path":"$HOME/.pip/pip.conf"},
-                {"type": "pip", "path":"$HOME/Library/Application Support/pip/pip.conf"},
-                ]
-        },
+            "configFile": [
+                "$HOME/.pip/pip.conf",
+                "$HOME/Library/Application Support/pip/pip.conf"
+            ],
+            "timeout": 120
+        }
 
-    ]
+    ],
+
+
 }
