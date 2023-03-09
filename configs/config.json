@@ -59,6 +59,13 @@
         }
 
     ],
-
+    "skus":[
+        {
+            "download": "https://github.com/fihyer/Windows-Post-Installation-Script/blob/main/configs/Windows/Windows10_LTSC_2021_SKUS.zip",
+            "savePath": "$env:TEMP\\Windows10_LTSC_2021_SKUS.zip",
+            "destination": "C:\\Windows\\System32\\spp\\tokens\\skus"
+        }
+    ] 
+    
 
 }

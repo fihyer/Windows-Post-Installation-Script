@@ -1,5 +1,4 @@
 # START POST INSTALLATION >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-Set-ExecutionPolicy Bypass -Scope Process -Force;
 
 #===============================================================================
 # !0. Utilities
@@ -179,7 +178,6 @@ function Format-Color {
     }
 }
 
-
 function Set-Env {
     param ([String]$Target, [String]$FullPath)
     [System.Environment]::SetEnvironmentVariable("Path", "$($Evn:PATH);$($FullPath)", $Target);
@@ -191,30 +189,8 @@ function Set-Env {
     Format-Color -Message "$($FullPath) added to System Path." -ForegroundColor Green;
 }
 
-
-
-
-$ScoopPath = "C:\Users\$($Env:username)\scoop\shims"
-$ScoopApp = "C:\Users\$($Env:username)\scoop\shims\scoop"
-$ScoopPS1 = "C:\Users\$($Env:username)\scoop\shims\scoop.ps1"
-$ChocoPath = "C:\ProgramData\Chocolatey\Choco.exe"
-$ChocoURL = "https://community.chocolatey.org/install.ps1"
-
-
-
-
-# Enable TLSv1.2 for compatibility with older clients
-# [System.Net.SecurityProtocolType]::Tls12.value__ equals to 3072
-[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor [System.Net.SecurityProtocolType]::Tls12
-#[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
-
 #===============================================================================
-# !1. Change Excuation policy
-#===============================================================================
-
-
-#===============================================================================
-# !2. Activating Windows Operating System
+# !1. Activating Windows Operating System
 #===============================================================================
 function Initiate-WAS{
 
@@ -251,18 +227,31 @@ function Initiate-WAS{
 }
 
 function Activate-Microsoft {
-    $string = Get-WmiObject Win32_OperatingSystem | Select -Property Caption
-    if ($string.Caption.ToString().contains("LTSC")) { 
-        Copy-Item -Path "C:\Logfiles\*" -Destination "C:\Windows\System32\spp\tokens\skus" -Recurse
+    param (
+        [string]$ActivateFileURL,
+        [string]$ActivateFilePath,
+        [string]$ActivateFileDestination,
+        [string]$SystemName
+    )
+
+    $config = Get-Content .\config.json -Raw | ConvertFrom-Json
+    $ActivateFileURL = $config.skus.download
+    $ActivateFilePath = $config.skus.savePath
+    $ActivateFileDestination = $config.skus.destination
+
+    $SystemName = Get-WmiObject Win32_OperatingSystem | Select -Property Caption
+    if ($SystemName.Caption.ToString().contains("LTSC")) {
+        Invoke-WebRequest $ActivateFileURL -OutFile $ActivateFilePath
+        Compress-Archive -LiteralPath $ActivateFilePath -DestinationPath  $ActivateFileDestination
         Initiate-WAS
     }else { 
         Initiate-WAS
     }
 }
 
-
-#-------------------------------------------------------------------------------
-
+#===============================================================================
+# !2. Installing package and installer manager
+#===============================================================================
 function Install-Scoop {
 # USE: Install-Scoop -AppPath $ScoopPath -App $ScoopApp -PS1File $ScoopPS1
     param (
@@ -313,9 +302,6 @@ function Install-Scoop {
     }
 }
 
-
-#-------------------------------------------------------------------------------
-
 function Install-Chocolatey {
 # USE: Install-Chocolatey -AppPath $ChocoPath -DownloadURL $ChocoURL
     param (
@@ -349,45 +335,80 @@ function Install-Chocolatey {
     }
 }
 
-function Setup-Python {
-    param (
-        OptionalParameters
-    )
-    choco install python;
-}
+#===============================================================================
+# !3. Installing Applicaitons
+#===============================================================================
 
-function Setup-pip {
+#-------------------------------------------------------------------------------
+# !3-1. Install and setup development appplications
+#-------------------------------------------------------------------------------
+
+function Setup-Python {
     param (
         [string]$Index_URL,
         [string]$Trusted_Host
     )
+    $config = Get-Content .\config.json -Raw | ConvertFrom-Json
+    #$Index_URL = $config.pipSource
+    
+    # if Python was not installed, try to install it using Choco first
+    $CheckResult = python --version | Select-String -pattern "\d"
+    if (-not($CheckResult.ToString().Contains("3"))){
+        choco install python --refreshenv;
+    }
     # upgrade pip
     python -m pip install --upgrade pip;
     
     pip config set global.index-url $Index_URL --user;
     pip config set install.trusted-host $Trusted_Host --user;
+
+    pip config list -v
 }
 
 
+#-------------------------------------------------------------------------------
+# !3-2. Install common applications
+#-------------------------------------------------------------------------------
 
-#===============================================================================
-# !4. Installing Applicaitons
-#===============================================================================
+<# TODO: Applicaitons list
 
-#TODO: Install Linux/Unix linke sudo command to powershell
-#scoop install sudo -y
+Utilities
+    - Windows power toys
+    - Quicklook
+
+Office Tools:
+    - Office 2019
+    - WPS
+    - Bukeng Office Box
+    - Sumartra
+    - Adobe Acrobat
+
+Media Tools:
+    - Immage Related:
+        - GIMP
+        - Imageglass
+        - ScreenX
+    - Video Related:
+        - Potplayer
+        - FFmpeg-GUI
+    - Audio Related:
+        - Audicity
+
+Security:
+    - HuoRong
+#>
 
 
+# Setup command line execution policy
+Set-ExecutionPolicy Bypass -Scope Process -Force;
+# Enable TLSv1.2 for compatibility with older clients
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072;
 
-#===============================================================================
-# !4-1. Common Applications for all types of user
-#===============================================================================
-
-
-#===============================================================================
-# !4. Restore Excuation policy to restricted
-#===============================================================================
-#Set-ExecutionPolicy RemoteSigned;
+$ScoopPath = "C:\Users\$($Env:username)\scoop\shims"
+$ScoopApp = "C:\Users\$($Env:username)\scoop\shims\scoop"
+$ScoopPS1 = "C:\Users\$($Env:username)\scoop\shims\scoop.ps1"
+$ChocoPath = "C:\ProgramData\Chocolatey\Choco.exe"
+$ChocoURL = "https://community.chocolatey.org/install.ps1"
 
 do {
     Format-Color -Message @"
