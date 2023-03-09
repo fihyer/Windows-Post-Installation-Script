@@ -349,6 +349,24 @@ function Install-Chocolatey {
     }
 }
 
+function Setup-Python {
+    param (
+        OptionalParameters
+    )
+    choco install python;
+}
+
+function Setup-pip {
+    param (
+        [string]$Index_URL,
+        [string]$Trusted_Host
+    )
+    # upgrade pip
+    python -m pip install --upgrade pip;
+    
+    pip config set global.index-url $Index_URL --user;
+    pip config set install.trusted-host $Trusted_Host --user;
+}
 
 
 
@@ -380,6 +398,7 @@ do {
              [1] Activate Microsoft Products
              [2] Install Chocolatey Package Management Tool
              [3] Install Scoop installer Management Tool
+             [4] Dev Environment Setup
              [Q] Exit
              __________________________________________________      
 
