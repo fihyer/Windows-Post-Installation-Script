@@ -234,14 +234,14 @@ function Activate-Microsoft {
         [string]$SystemName
     )
 
-    $config = Get-Content .\config.json -Raw | ConvertFrom-Json
+    $config = Get-Content $configFile -Raw | ConvertFrom-Json
     $ActivateFileURL = $config.skus.download
     $ActivateFilePath = $config.skus.savePath
     $ActivateFileDestination = $config.skus.destination
 
     $SystemName = Get-WmiObject Win32_OperatingSystem | Select -Property Caption
     if ($SystemName.Caption.ToString().contains("LTSC")) {
-        Invoke-WebRequest $ActivateFileURL -OutFile $ActivateFilePath
+        Invoke-WebRequest -Uri $ActivateFileURL -UseBasicParsing -OutFile $ActivateFilePath -ErrorAction Stop
         Compress-Archive -LiteralPath $ActivateFilePath -DestinationPath  $ActivateFileDestination
         Initiate-WAS
     }else { 
@@ -409,6 +409,10 @@ $ScoopApp = "C:\Users\$($Env:username)\scoop\shims\scoop"
 $ScoopPS1 = "C:\Users\$($Env:username)\scoop\shims\scoop.ps1"
 $ChocoPath = "C:\ProgramData\Chocolatey\Choco.exe"
 $ChocoURL = "https://community.chocolatey.org/install.ps1"
+
+$configDownloadURL = 'https://ghdl.feizhuqwq.cf/https://raw.githubusercontent.com/fihyer/Windows-Post-Installation-Script/main/configs/config.json'
+$configFile = "$env:TEMP\config.json"
+Invoke-WebRequest -Uri $configDownloadURL -UseBasicParsing -OutFile $configFile -ErrorAction Stop
 
 do {
     Format-Color -Message @"
