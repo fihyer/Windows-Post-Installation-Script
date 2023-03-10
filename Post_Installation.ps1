@@ -410,7 +410,7 @@ $ScoopPS1 = "C:\Users\$($Env:username)\scoop\shims\scoop.ps1"
 $ChocoPath = "C:\ProgramData\Chocolatey\Choco.exe"
 $ChocoURL = "https://community.chocolatey.org/install.ps1"
 
-$configDownloadURL = 'https://ghdl.feizhuqwq.cf/https://raw.githubusercontent.com/fihyer/Windows-Post-Installation-Script/main/configs/config.json'
+$configDownloadURL = 'https://raw.githubusercontent.com/fihyer/Windows-Post-Installation-Script/main/configs/config.json'
 $configFile = "$env:TEMP\config.json"
 Invoke-WebRequest -Uri $configDownloadURL -UseBasicParsing -OutFile $configFile -ErrorAction Stop
 
