@@ -398,6 +398,8 @@ Security:
     - HuoRong
 #>
 
+# TODO: 1. reconfigure the downloading urls into config json file
+# TODO: 2. adding windows activation method for Windows operating system under win10
 
 # Setup command line execution policy
 Set-ExecutionPolicy Bypass -Scope Process -Force;
